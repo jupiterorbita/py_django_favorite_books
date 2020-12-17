@@ -1,0 +1,18 @@
+from app_fav_books.models import User, Book
+
+book1 = Book.objects.create(title="Bob's first Book", description="This is a book about Bob and his friends!", uploaded_by=bob)
+
+bob = User.objects.create(first_name="Bob", last_name="Bobbers", email="bob@email.com", password="shellpass")
+
+jay
+janis
+daffy
+
+book1 = Book.objects.create(title="Bob's First Book", description="A book about bob
+ and his friends!", uploaded_by=jay)
+
+ book1
+ book2 -> by jay
+ book3 -> daffy -> liked by janis
+
+ book3.users_who_like.add(janis)
