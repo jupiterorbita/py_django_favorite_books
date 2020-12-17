@@ -12,7 +12,6 @@ def register(request):
   print('\n------------ REGISTER METHOD ---------')
   if request.method == "POST":
     print(request.POST)
-    
     errors = User.objects.validate_user_registration(request.POST)
     if errors:
       for key, value in errors.items():
@@ -27,11 +26,9 @@ def register(request):
       # birthday = request.POST['birthday']
       password = request.POST['password']
       hashed_pw = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
-      
       created_user = User.objects.create(first_name=first_name, last_name=last_name, email=email, password=hashed_pw) 
       request.session['user_id'] = created_user.id
       request.session['user_first_name'] = created_user.first_name
-      
       messages.success(request, "Welcome from Registration")
       return redirect('/books')
   return redirect('/')
@@ -42,7 +39,6 @@ def login(request):
   print('\n------------ LOGIN METHOD ---------')
   if request.method == "POST":
     print(request.POST)
-    
     errors = User.objects.validate_user_login(request.POST)
     if errors:
       for key, value in errors.items():
@@ -79,7 +75,6 @@ def books_page(request):
   if 'user_id' not in request.session:
     messages.error(request, "please log in", extra_tags="warning")
     return redirect('/')
-  
   this_user = User.objects.get(id=request.session['user_id'])
   # get all books
   context = {
@@ -93,7 +88,6 @@ def create(request):
   print('--- create method  ---')
   if request.method == 'POST':
     print(request.POST)
-    
     errors = Book.objects.book_validation(request.POST)
     if errors:
       for key, val in errors.items():
@@ -103,13 +97,11 @@ def create(request):
       # no book errros go and pass it in db with user logged in
       title = request.POST['title']
       description = request.POST['description']
-      
       # books uploaded should auto favorite
       current_user = User.objects.get(id=request.session['user_id'])
       created_book = Book.objects.create(title=title, description=description, uploaded_by=current_user)
       created_book.users_who_like.add(current_user)
       messages.success(request, "Successfully CREATED a  book!", extra_tags="success")
-
   return redirect('/books')
   
 
@@ -118,23 +110,19 @@ def create(request):
 def check_if_edit_or_show(request, book_id):
   print('\n------------ edit? or view? method check ---------')
   print('book_id->', book_id)
-  
   this_book_user_id = Book.objects.get(id=book_id).uploaded_by.id
   this_user_id = request.session['user_id']
-  
   if this_book_user_id == this_user_id:
     print('\n\nthis_book_user_id ->', this_book_user_id)
     print('this_user_id ->', this_user_id)
     print('going to edit page!')
     return redirect(f'/edit_book_page/{book_id}')
-  
   else:
     return redirect(f'/show_book_page/{book_id}')
   
 def edit_book_page(request, book_id):
   print('--- edit_book_page html ---')
   print('book_id->',book_id)
-  
   # prepopulate book fields'
   context = {
     'this_book' : Book.objects.get(id=book_id)
@@ -142,9 +130,8 @@ def edit_book_page(request, book_id):
   return render(request, 'edit_book_page.html', context)
 
 def show_book_page(request, book_id):
-  print('--- show_book_page html ---')
+  print('------------- show_book_page html -------------')
   print('book_id->',book_id)
-  
   #get that book
   context = {
     # 'this_books_users_who_like' : Book.objects.get(id=book_id).users_who_like.all(),
@@ -155,11 +142,10 @@ def show_book_page(request, book_id):
   return render(request, 'show_book_page.html', context)
 
 def update(request):
-  print('✅✅✅✅✅--- update method ---')
+  print('------------ update method -------------')
   print(request.POST)
   book_id = request.POST['book_id']
   print('\nbook_id->', book_id)
-  
   # check book for edit
   errors = Book.objects.book_validation(request.POST)
   if errors:
@@ -170,7 +156,6 @@ def update(request):
     # no book errros go and UPDATE in db with user logged in
     title = request.POST['title']
     description = request.POST['description']
-    
     # books uploaded should auto favorite
     # current_user = User.objects.get(id=request.session['user_id'])
     book_to_update = Book.objects.get(id=book_id)
@@ -178,15 +163,12 @@ def update(request):
     book_to_update.description = description
     book_to_update.save()
     messages.success(request, "Successfully updated book!", extra_tags="success")
-
     # created_book.users_who_like.add(current_user)
-  
   return redirect(f'/show_book_page/{book_id}')
 
 
 def like_this_book(request, book_id):
-  print('--- like_this_book method ❤---')
-
+  print('------------ like_this_book method ❤-------------')
   this_user = User.objects.get(id=request.session['user_id'])
   # like this book
   Book.objects.get(id=book_id).users_who_like.add(this_user)
@@ -194,8 +176,7 @@ def like_this_book(request, book_id):
   return redirect('/books')
 
 def unlike(request, book_id):
-  print('--- unlike method ❌---')
-  
+  print('------------- unlike method ❌-----------------')
   this_user = User.objects.get(id=request.session['user_id'])
   # unlike this book
   Book.objects.get(id=book_id).users_who_like.remove(this_user)
@@ -204,13 +185,10 @@ def unlike(request, book_id):
 
 
 
-
 def delete(request):
-  print('--- delete method ❌---')
+  print('-------------- delete method ❌--------------')
   book_id = request.POST['book_id']
-  
   Book.objects.get(id=book_id).delete()
   messages.success(request, "Successfully DELETED book!", extra_tags="warning")
-
   print('\nbook_id->', book_id)
   return redirect('/books')

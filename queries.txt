@@ -16,3 +16,5 @@ book1 = Book.objects.create(title="Bob's First Book", description="A book about 
  book3 -> daffy -> liked by janis
 
  book3.users_who_like.add(janis)
+
+ if user in this_books_favs
