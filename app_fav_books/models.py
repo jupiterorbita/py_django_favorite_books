@@ -41,6 +41,15 @@ class UserManager(models.Manager):
     if User.objects.filter(email=email):
       errors['email'] = "EMAIL ALREADY exists! choose another!"
     # ---------- check BIRTHDAY ---------
+    
+    # if (postData['release_date']) == "":
+    #   errors['release_date'] = "date must be filled!"
+    # else:
+    #   now = datetime.now()
+    #   release_date = postData['release_date']
+      
+    
+    
     # if postData['birthday'] > str(today):
     #   errors['birthday'] = "BIRTHDAY should be in the past!"
     # # check bday AGE

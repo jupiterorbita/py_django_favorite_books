@@ -58,6 +58,15 @@
     </div>
     <div class="container">
       <h4>Users who liked this book ♥</h4>
+      {% if this_user not in all_users_who_like %}
+      <a href="/like_this_book/{{this_book.id}}">ADD this to ❤</a>
+      {% else %}
+      <p>
+        this is one of your 💙 |
+        <a href="/unlike/{{this_book.id}}">unlike ❌</a>
+      </p>
+      {% endif %}
+
       <ul>
         {% for user_who_likes in all_users_who_like %}
         <li>

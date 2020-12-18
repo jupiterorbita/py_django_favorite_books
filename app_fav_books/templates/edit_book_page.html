@@ -99,8 +99,12 @@
         <h4>Users Who Like This Book</h4>
 
         <ul>
-          <li>Froddo Baggins <a href="#">Un-favortite!</a></li>
-          <li>Billy Braggins</li>
+          {% for user in this_book_liked_by %}
+          <li>{{ user.first_name}}&nbsp;{{user.last_name}}</li>
+          {% endfor %}
+
+          <!-- <li>Froddo Baggins <a href="#">Un-favortite!</a></li>
+          <li>Billy Braggins</li> -->
         </ul>
       </div>
     </div>

@@ -3,6 +3,7 @@ from .models import User, Book
 from django.contrib import messages
 import bcrypt
 from bcrypt import checkpw
+from datetime import datetime
 
 def index(request):
   return render(request, 'index.html')
@@ -85,7 +86,7 @@ def books_page(request):
 
 
 def create(request):
-  print('--- create method  ---')
+  print('---------------- create method  --------------')
   if request.method == 'POST':
     print(request.POST)
     errors = Book.objects.book_validation(request.POST)
@@ -102,6 +103,15 @@ def create(request):
       created_book = Book.objects.create(title=title, description=description, uploaded_by=current_user)
       created_book.users_who_like.add(current_user)
       messages.success(request, "Successfully CREATED a  book!", extra_tags="success")
+      
+      # # date
+      # release_date = datetime.strptime(release_date, '%Y-%m-%d')
+      # date_diff = datetime.now() - release_date
+      
+      # date_diff = date_diff.total_seconds()
+      # date_diff = int(date_diff)
+      # # now compare if > or less than <
+      # print(date_diif)
   return redirect('/books')
   
 
@@ -125,7 +135,8 @@ def edit_book_page(request, book_id):
   print('book_id->',book_id)
   # prepopulate book fields'
   context = {
-    'this_book' : Book.objects.get(id=book_id)
+    'this_book' : Book.objects.get(id=book_id),
+    'this_book_liked_by' : Book.objects.get(id=book_id).users_who_like.all()
   }
   return render(request, 'edit_book_page.html', context)
 
@@ -135,7 +146,7 @@ def show_book_page(request, book_id):
   #get that book
   context = {
     # 'this_books_users_who_like' : Book.objects.get(id=book_id).users_who_like.all(),
-    # 'this_user' : User.objects.get(id=request.session['user_id']),
+    'this_user' : User.objects.get(id=request.session['user_id']),
     'this_book' : Book.objects.get(id=book_id),
     'all_users_who_like' : Book.objects.get(id=book_id).users_who_like.all() 
   }
